@@ -1,6 +1,6 @@
 import argparse
 import json
-from api_client import APIClient
+from scraper.api_client import APIClient
 
 def save_to_json(data, filename="properties_data.json"):
     with open(filename, "w") as file:
