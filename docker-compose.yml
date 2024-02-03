@@ -1,0 +1,9 @@
+version: '3'
+services:
+  sreality-scraper:
+    build: .
+    volumes:
+      - .:/app
+    environment:
+      - SREALITY_BASE_URL=https://www.sreality.cz/api/cs/v2/
+

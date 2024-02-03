@@ -4,3 +4,6 @@ structure.txt
 venv/
 properties_data.json
 scraper/__pycache__/__init__.cpython-311.pyc
+db/__pycache__/
+sreality.db
+db/__init__.py
