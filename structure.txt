@@ -1,0 +1,34 @@
+sreality_scraper/
+│
+├── scraper/
+│   ├── __init__.py
+│   ├── api_client.py             # Handles API requests to Sreality.
+│   ├── property_scraper.py       # Orchestrates scraping and processing of property data.
+│   └── config.py                 # Configuration settings for the API and scraper.
+│
+├── db/
+│   ├── __init__.py
+│   ├── models.py                 # Defines database models for properties.
+│   ├── database.py               # Database connection and session management.
+│   └── crud.py                   # CRUD operations for database interaction.
+│
+├── utils/
+│   ├── __init__.py
+│   ├── mapping.py                # Maps API response to database model fields.
+│   └── error_handler.py          # Error handling utilities.
+│
+├── visualization/
+│   ├── __init__.py
+│   ├── visualize.py              # Code to generate visualizations from the database.
+│   └── dashboard.py              # Web dashboard to display visualizations.
+│
+├── tests/
+│   ├── __init__.py
+│   ├── test_api_client.py
+│   ├── test_property_scraper.py
+│   └── test_database_operations.py
+│
+├── .env                          # Environment variables for API keys, database credentials, etc.
+├── requirements.txt              # Python package dependencies.
+└── main.py                       # Main script to run the scraper and initiate data processing.
+
