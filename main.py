@@ -1,13 +1,16 @@
 import argparse
 import json
 from scraper.api_client import APIClient
-#from db.database import SessionLocal, init_db
 from db.models import Property
-from db.database import SessionLocal, engine
+from db.database import SessionLocal
 from db.database import init_db
+from scraper.interactive_search import run_interactive_mode
+
+
 def save_to_json(data, filename="properties_data.json"):
     with open(filename, "w") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
+
 def save_to_db(data):
     db = SessionLocal()
     try:
@@ -31,34 +34,47 @@ def save_to_db(data):
         db.close()
 
 def main():
-    parser = argparse.ArgumentParser(description="Fetch properties from Sreality API based on specified filters and save them to a .json file.")
-    init_db()  # Ensure this is called to create the database tables if they don't exist.
+    parser = argparse.ArgumentParser(description="Fetch properties from Sreality API and optionally save them to a .json file.")
+    parser.add_argument("--interactive", help="Run in interactive mode", action='store_true')
+    parser.add_argument("--mode", help="Mode of operation: fetch, visualize, db_init", default="fetch")
+    parser.add_argument("--json", help="Save to .json instead of db", action='store_true')
+    init_db()  # Initialize the database tables if they don't exist.
+
+    # Fetch and save modes
+    if parser.parse_args().mode in ["fetch", "visualize", "interactive"]:
+        client = APIClient()
+        data = client.fetch_properties({k: v for k, v in vars(parser.parse_args()).items() if v is not None and k not in ['mode', 'json']})
+
+        if data:
+            if parser.parse_args().json:
+                save_to_json(data)
+                print("Data has been saved to a .json file.")
+            else:
+                save_to_db(data)
+                print("Data has been saved to the database.")
+        else:
+            print("Failed to fetch data.")
+
+    # Visualization mode
+    if parser.parse_args().mode == "visualize":
+        from visualization.visualize import generate_price_distribution
+        generate_price_distribution()
+
+    # Database initialization mode
+    elif parser.parse_args().mode == "db_init":
+        # Assuming init_db() function initializes the database. If not, adjust accordingly.
+        print("Database has been initialized.")
+
+    # Interactive search mode
+    if parser.parse_args().mode == "interactive":
+            client = APIClient()  # Assuming you have a class APIClient for fetching properties
+            run_interactive_mode(client)
     
-    # Adding arguments based on sections 3.1, 3.2, and 3.3
-    parser.add_argument("--category_main_cb", help="Main category of the property", type=int)
-    parser.add_argument("--category_sub_cb", help="Subcategory of the property", type=int)
-    parser.add_argument("--category_type_cb", help="Type of listing (sale, rent, auction)", type=int)
-    parser.add_argument("--locality_region_id", help="Region ID", type=int)
-    parser.add_argument("--locality_district_id", help="District ID", type=int)
-    parser.add_argument("--no_auction", help="Exclude auctions", type=int, choices=[0, 1])
-    parser.add_argument("--per_page", help="Number of results per page", type=int, default=20)
-    parser.add_argument("--page", help="Page number", type=int, default=1)
-    parser.add_argument("--tms", help="Timestamp for requests", type=int)
-
-    args = parser.parse_args()
-
-    # Building query params from provided args
-    query_params = {k: v for k, v in vars(args).items() if v is not None}
-
-    client = APIClient()
-    data = client.fetch_properties(query_params)
-
-    if data:
-        # save_to_json(data) ## let's  save it in db instead ... might add optional output to .json later
-        save_to_db(data)
-        print("Data has been saved to properties_data.json.")
+            run_interactive_mode(data)
     else:
-        print("Failed to fetch data.")
+            print("Failed to fetch data.")
+        # Normal operation based on command line arguments
+pass
 
 if __name__ == "__main__":
     main()
