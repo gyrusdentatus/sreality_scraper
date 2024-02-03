@@ -6,7 +6,6 @@ from db.database import SessionLocal
 from db.database import init_db
 from scraper.interactive_search import run_interactive_mode
 
-
 def save_to_json(data, filename="properties_data.json"):
     with open(filename, "w") as file:
         json.dump(data, file, ensure_ascii=False, indent=4)
@@ -34,19 +33,19 @@ def save_to_db(data):
         db.close()
 
 def main():
-    parser = argparse.ArgumentParser(description="Fetch properties from Sreality API and optionally save them to a .json file.")
+    parser = argparse.ArgumentParser(description="Fetch properties from API and optionally save them to a .json file or database.")
     parser.add_argument("--interactive", help="Run in interactive mode", action='store_true')
-    parser.add_argument("--mode", help="Mode of operation: fetch, visualize, db_init", default="fetch")
+    parser.add_argument("--mode", help="Mode of operation: fetch, visualize, db_init, interactive", default="fetch")
     parser.add_argument("--json", help="Save to .json instead of db", action='store_true')
     init_db()  # Initialize the database tables if they don't exist.
+    args = parser.parse_args()
 
-    # Fetch and save modes
-    if parser.parse_args().mode in ["fetch", "visualize", "interactive"]:
+    if args.mode in ["fetch", "visualize"]:
         client = APIClient()
-        data = client.fetch_properties({k: v for k, v in vars(parser.parse_args()).items() if v is not None and k not in ['mode', 'json']})
+        data = client.fetch_properties({k: v for k, v in vars(args).items() if v is not None and k not in ['mode', 'json', 'interactive']})
 
         if data:
-            if parser.parse_args().json:
+            if args.json:
                 save_to_json(data)
                 print("Data has been saved to a .json file.")
             else:
@@ -55,26 +54,12 @@ def main():
         else:
             print("Failed to fetch data.")
 
-    # Visualization mode
-    if parser.parse_args().mode == "visualize":
-        from visualization.visualize import generate_price_distribution
-        generate_price_distribution()
-
-    # Database initialization mode
-    elif parser.parse_args().mode == "db_init":
-        # Assuming init_db() function initializes the database. If not, adjust accordingly.
+    elif args.mode == "db_init":
         print("Database has been initialized.")
 
-    # Interactive search mode
-    if parser.parse_args().mode == "interactive":
-            client = APIClient()  # Assuming you have a class APIClient for fetching properties
-            run_interactive_mode(client)
-    
-            run_interactive_mode(data)
-    else:
-            print("Failed to fetch data.")
-        # Normal operation based on command line arguments
-pass
+    if args.interactive or args.mode == "interactive":
+        client = APIClient()
+        run_interactive_mode(client)
 
 if __name__ == "__main__":
     main()

@@ -7,3 +7,4 @@ scraper/__pycache__/__init__.cpython-311.pyc
 db/__pycache__/
 sreality.db
 db/__init__.py
+scraper/__pycache__/interactive_search.cpython-311.pyc
