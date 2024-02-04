@@ -28,34 +28,30 @@ sreality.cz crawler is a Python-based tool designed to fetch and display real es
 ### Setup
 
 1. Clone the repository to your local machine:
-   \```bash
+   ```bash
    git clone https://github.com/yourusername/realestate-crawler.git
    cd realestate-crawler
-   \```
+   ```
 2. Install the required Python packages:
-   \```bash
+   ```bash
    pip install -r requirements.txt
-   \```
+   ```
 
 ## Usage
 
 To start the Real Estate Crawler in interactive mode, run the following command in your terminal:
-\```bash
+```bash
 python3 main.py --mode interactive
-\```
+```
 Follow the on-screen prompts to specify your search criteria.
 
 ## Configuration
 
 Environmental variables can be set to configure the API base URL and request timeout. Create a `.env` file in the project root with the following content:
-\```makefile
+```makefile
 SREALITY_BASE_URL=https://www.sreality.cz/api/cs/v2/
 REQUEST_TIMEOUT=30
-\```
-
-## Contributing
-
-Contributions to the Real Estate Crawler are welcome. Please follow the standard fork-and-pull request workflow. If you plan to introduce a significant change, it's best to discuss it first by opening an issue.
+```
 
 ## License
 
